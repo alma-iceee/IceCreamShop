@@ -22,7 +22,7 @@ namespace IceCreamShop.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "IceScreams",
+                name: "IceCreams",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -35,9 +35,9 @@ namespace IceCreamShop.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_IceScreams", x => x.Id);
+                    table.PrimaryKey("PK_IceCreams", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IceScreams_Companies_CompanyId",
+                        name: "FK_IceCreams_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
@@ -45,15 +45,15 @@ namespace IceCreamShop.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_IceScreams_CompanyId",
-                table: "IceScreams",
+                name: "IX_IceCreams_CompanyId",
+                table: "IceCreams",
                 column: "CompanyId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "IceScreams");
+                name: "IceCreams");
 
             migrationBuilder.DropTable(
                 name: "Companies");

@@ -4,14 +4,16 @@ using IceCreamShop;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IceCreamShop.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211028043810_Reworked")]
+    partial class Reworked
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -86,17 +88,17 @@ namespace IceCreamShop.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("GoodsStatusId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("StatusId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GoodsStatusId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("StatusId");
 
                     b.ToTable("Goods");
                 });
@@ -129,14 +131,12 @@ namespace IceCreamShop.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("GoodsId")
-                        .HasColumnType("int");
+                    b.Property<string>("GoodsCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("GoodsId");
 
                     b.ToTable("Orders");
                 });
@@ -148,11 +148,11 @@ namespace IceCreamShop.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
+                    b.Property<string>("Company")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -167,24 +167,18 @@ namespace IceCreamShop.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("CompanyId");
-
                     b.ToTable("Products");
                 });
 
             modelBuilder.Entity("IceCreamShop.Models.Goods", b =>
                 {
-                    b.HasOne("IceCreamShop.Models.GoodsStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("GoodsStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("IceCreamShop.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("IceCreamShop.Models.GoodsStatus", "Status")
+                        .WithMany()
+                        .HasForeignKey("StatusId");
 
                     b.Navigation("Product");
 
@@ -193,40 +187,20 @@ namespace IceCreamShop.Migrations
 
             modelBuilder.Entity("IceCreamShop.Models.Order", b =>
                 {
-                    b.HasOne("IceCreamShop.Models.Customer", "Customer")
+                    b.HasOne("IceCreamShop.Models.Customer", null)
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("IceCreamShop.Models.Goods", "Goods")
-                        .WithMany()
-                        .HasForeignKey("GoodsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Goods");
                 });
 
             modelBuilder.Entity("IceCreamShop.Models.Product", b =>
                 {
                     b.HasOne("IceCreamShop.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("IceCreamShop.Models.Company", "Company")
-                        .WithMany()
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("IceCreamShop.Models.Customer", b =>
