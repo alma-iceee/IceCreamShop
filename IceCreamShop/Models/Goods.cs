@@ -5,16 +5,16 @@ namespace IceCreamShop.Models
 {
     public class Goods : BaseEntity
     {
-        public string Code { get; set; } = "GENERATE";
+        public string Code { get; set; } = Guid.NewGuid().ToString();
 
         [ForeignKey("ProductId")]
         public Product Product { get; set; }
         public int ProductId { get; set; }
 
-        public DateTime Date { get; set; } = DateTime.Now.AddDays(3);
+        public DateTime Date { get; set; } = DateTime.Now;
 
         [ForeignKey("GoodsStatusId")]
-        public GoodsStatus Status { get; set; }
+        public GoodsStatus GoodsStatus { get; set; }
         public int GoodsStatusId { get; set; }
     }
 }

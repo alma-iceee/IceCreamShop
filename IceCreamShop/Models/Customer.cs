@@ -4,13 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IceCreamShop.Models
 {
-    public class Customer
+    public class Customer : BaseEntity
     {
-        [Key]
-        public int Id { get; set; }
         public string Surname { get; set; }
         public string Name { get; set; }
         public string PhoneNumber { get; set; }
-        public ICollection<Order> Orders { get; set; } = new HashSet<Order>();
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

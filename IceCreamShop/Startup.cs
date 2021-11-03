@@ -61,6 +61,7 @@ namespace IceCreamShop
             builder.EntitySet<Customer>("Customers");
             builder.EntitySet<Goods>("Goods");
             builder.EntitySet<GoodsStatus>("GoodsStatuses");
+            builder.EntitySet<Customer>("Customers");
             builder.EntitySet<Order>("Orders");
             builder.EntitySet<Product>("Products");
 

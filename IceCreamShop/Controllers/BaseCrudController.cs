@@ -2,30 +2,20 @@
 using Microsoft.AspNetCore.OData.Deltas;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
-using Microsoft.EntityFrameworkCore;
 
 namespace IceCreamShop.Controllers
 {
     public interface IBaseCrudController<T> where T : class
     {
-        [HttpDelete]
-        [EnableQuery]
         public IActionResult Delete(int key);
 
-        [EnableQuery]
-        [HttpGet]
         public IActionResult Get();
 
-        [EnableQuery]
-        [HttpGet]
         public IActionResult Get(int key);
 
-        [HttpPost]
         public IActionResult Post([FromBody] T model);
 
-        [EnableQuery]
-        [HttpPut]
-        public IActionResult Put(int key, [FromBody] Delta<T> model);
+        public IActionResult Patch(int key, [FromBody] Delta<T> model);
     }
 
     public class BaseCrudController<T> : ODataController , IBaseCrudController<T> where T : class
@@ -37,39 +27,47 @@ namespace IceCreamShop.Controllers
             _dbContext = dbContext;
         }
 
+        [HttpDelete]
+        [EnableQuery(MaxExpansionDepth = 3)]
         public IActionResult Delete(int key)
         {
-            var dbSet = _dbContext.Set<T>();
-            var record = GetModelById(dbSet, key);
+            var record = _dbContext.Set<T>().Find(key);
 
             if (record == null)
             {
-                return NotFound($"Not found record with id = {key}");
+                return NotFound($"Not found {nameof(record)} with id = {key}");
             }
 
+            var dbSet = _dbContext.Set<T>();
             dbSet.Remove(record);
             _dbContext.SaveChanges();
 
             return Ok();
         }
 
+        [HttpGet]
+        [EnableQuery(MaxExpansionDepth = 3)]
         public IActionResult Get()
         {
             return Ok(_dbContext.Set<T>());
         }
 
+        [HttpGet]
+        [EnableQuery(MaxExpansionDepth = 3)]
         public IActionResult Get(int key)
         {
-            var record = GetModelById(_dbContext.Set<T>(), key);
+            var record = _dbContext.Set<T>().Find(key);
 
             if (record == null)
             {
-                return NotFound($"Not found record with id = {key}");
+                return NotFound($"Not found {nameof(record)} with id = {key}");
             }
 
             return Ok(record);
         }
 
+        [HttpPost]
+        [EnableQuery(MaxExpansionDepth = 3)]
         public IActionResult Post([FromBody] T model)
         {
             var dbSet = _dbContext.Set<T>();
@@ -80,32 +78,21 @@ namespace IceCreamShop.Controllers
             return Created(model);
         }
 
-        public IActionResult Put(int key, [FromBody] Delta<T> model)
+        [HttpPatch]
+        [EnableQuery(MaxExpansionDepth = 3)]
+        public IActionResult Patch(int key, [FromBody] Delta<T> model)
         {
-            var record = GetModelById(_dbContext.Set<T>(), key);
+            var record = _dbContext.Set<T>().Find(key);
 
             if (record == null)
             {
-                return NotFound($"Not found customer with id = {key}");
+                return NotFound($"Not found {nameof(model)} with id = {key}");
             }
 
-            model.Put(record);
+            model.Patch(record);
             _dbContext.SaveChanges();
 
             return Updated(record);
-        }
-
-        private static T GetModelById(DbSet<T> dbSet, int key)
-        {
-            foreach (var model in dbSet)
-            {
-                if ((int)model.GetType().GetProperty("Id").GetValue(model) == key)
-                {
-                    return model;
-                }
-            }
-
-            return null;
         }
     }
 }
