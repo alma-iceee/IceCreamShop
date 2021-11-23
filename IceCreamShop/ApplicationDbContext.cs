@@ -13,9 +13,11 @@ namespace IceCreamShop
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Customers.Include(c => c.Orders).ThenInclude(o => o.Goods);
+
         }
     }
 }
